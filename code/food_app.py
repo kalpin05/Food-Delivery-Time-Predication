@@ -163,7 +163,7 @@ if __name__ == "__main__":
     st.markdown("""
         <style>
         .main {
-            background:#8ABEB9
+            background:#8ABEB9;
         }
         .stApp {
             background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
