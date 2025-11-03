@@ -17,15 +17,33 @@ def get_user_input(df_train):
     with col1:
         date = st.date_input("📅 Order Date", help="Select the date when order was placed")
     with col2:
-        order_time = st.time_input("🕐 Order Time", step=60, help="Select the time when order was placed")
+        order_time = st.text_input("🕐 Order Time ", 
+                                  placeholder="Enter time (e.g. 14:30)",
+                                  help="Enter the time when order was placed")
+    
+    # Validate time format
+    try:
+        order_time = datetime.datetime.strptime(order_time, '%H:%M').time()
+    except:
+        if order_time:  # Only show error if user has entered something
+            st.error("Please enter time in HH:MM format (e.g. 14:30)")
+            return
+        order_time = datetime.datetime.now().time()
     
     order_datetime = datetime.datetime.combine(date, order_time)
     
     col3, col4 = st.columns(2)
     with col3:
-        pickup_time = st.time_input("🕑 Order Pickup Time",
-                                    order_datetime + datetime.timedelta(minutes=15), 
-                                    step=60, help="Time when order was picked up")
+        pickup_time = st.text_input("🕑 Order Pickup Time ", 
+                                  placeholder="Enter time (e.g. 14:45)",
+                                  help="Enter the time when order was picked up")
+        try:
+            pickup_time = datetime.datetime.strptime(pickup_time, '%H:%M').time()
+        except:
+            if pickup_time:  # Only show error if user has entered something
+                st.error("Please enter time in HH:MM format (e.g. 14:45)")
+                return
+            pickup_time = (datetime.datetime.now() + datetime.timedelta(minutes=15)).time()
     with col4:
         order_type = st.selectbox('🍕 Type of Order',
                                   df_train['Type_of_order'].unique())
@@ -145,83 +163,119 @@ if __name__ == "__main__":
     st.markdown("""
         <style>
         .main {
-            background: #0f0f0f;
+            background:#8ABEB9
         }
         .stApp {
-            background: linear-gradient(135deg, #141e30 0%, #243b55 100%);
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
         }
         h1 {
             color: white;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             text-align: center;
             padding: 25px;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
             border-radius: 15px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             font-weight: 700;
             letter-spacing: 1px;
+            margin-bottom: 30px;
+            border: 2px solid #81c784;
         }
         h3 {
-            color: #1a1a2e;
+            color: white;
             font-weight: 700;
+            padding: 10px;
+            background: #000000;
+            border-radius: 8px;
+        }
+        .stTextInput>div>div>input {
+            background-color: #EFECE3;
+            color: #1a1a1a;
+        }
+        .stSelectbox>div>div>div {
+            background-color: #EFECE3;
+            color: #1a1a1a;
+        }
+        .stSlider>div>div {
+            background-color: #EFECE3;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        label {
+            color: white !important;
+            font-weight: 600 !important;
+            background: rgba(27, 94, 32, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        p {
+            color: white !important;
+            background: rgba(27, 94, 32, 0.8);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
         .stButton>button {
             width: 100%;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             font-size: 22px;
             font-weight: bold;
             padding: 18px;
             border-radius: 12px;
             border: none;
-            box-shadow: 0 6px 12px rgba(255, 107, 107, 0.4);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
         .stButton>button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 16px rgba(255, 107, 107, 0.5);
-            background: linear-gradient(135deg, #ff5252 0%, #e04e5f 100%);
-        }
-        .success-box {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-            padding: 35px;
-            border-radius: 15px;
-            color: white;
-            text-align: center;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            margin: 25px 0;
-        }
-        .success-box h2 {
-            color: white;
-            font-weight: 700;
-            margin: 0;
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
         }
         .result-card {
-            background: #ffffff;
-            padding: 30px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: rgba(46, 125, 50, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
             margin: 15px 0;
-            border-left: 5px solid #ff6b6b;
+            border-left: 5px solid #81c784;
+            color: white;
         }
         .metric-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: rgba(46, 125, 50, 0.9);
             padding: 20px;
             border-radius: 10px;
             color: white;
             text-align: center;
             margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         }
-        hr {
-            margin: 15px 0;
-            border: none;
-            height: 3px;
-            background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
+        .success-box {
+            background: rgba(46, 125, 50, 0.95);
+            padding: 25px;
+            border-radius: 10px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            margin: 20px 0;
         }
-        div[data-testid="stMarkdownContainer"] p {
-            font-size: 16px;
+        div[data-testid="stMarkdownContainer"] > p {
+            background: transparent;
+            color: white !important;
+        }
+        .stMarkdown a {
+            color: #81c784 !important;
+        }
+        div.stMetric {
+            background: rgba(46, 125, 50, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+        div.stMetric label {
+            color: #a5d6a7 !important;
+        }
+        .metric-value {
+            color: white !important;
         }
         </style>
     """, unsafe_allow_html=True)
